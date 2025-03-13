@@ -144,7 +144,7 @@ def match_gt2pred_simple(gt_items, pred_items, line_type, img_name):
     gt_lines, norm_gt_lines, gt_cat_list, pred_lines, norm_pred_lines = get_gt_pred_lines(gt_items, pred_items, line_type)
     
     match_list = []
-    if not norm_gt_lines: # not matched pred should be concatenated
+    if (not norm_gt_lines) and bool(norm_pred_lines): # not matched pred should be concatenated
         # print("One of the lists is empty. Returning an empty gt result.")
         # for pred_idx in range(len(norm_pred_lines)):
         pred_idx_list = range(len(norm_pred_lines))

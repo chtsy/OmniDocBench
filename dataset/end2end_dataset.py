@@ -49,18 +49,19 @@ class End2EndDataset():
         saved_element_dict = defaultdict(list)
         related_truncated = []
         truncated_all = {}
-        for relation in selected_annos["extra"]["relation"]:   # Handle truncated text issues
-            if relation["relation_type"] == 'truncated':
-                truncated_all[relation["source_anno_id"]] = ""
-                truncated_all[relation["target_anno_id"]] = ""
-                exist_flag = False
-                for merge_list in related_truncated:
-                    if relation["source_anno_id"] in merge_list or relation["target_anno_id"] in merge_list:  # Consider cases where three text blocks may need to be merged
-                        merge_list.append(relation["source_anno_id"])
-                        merge_list.append(relation["target_anno_id"])
-                        exist_flag = True
-                if not exist_flag:
-                    related_truncated.append([relation["source_anno_id"], relation["target_anno_id"]])       
+        if "extra" in selected_annos:
+            for relation in selected_annos["extra"]["relation"]:   # Handle truncated text issues
+                if relation["relation_type"] == 'truncated':
+                    truncated_all[relation["source_anno_id"]] = ""
+                    truncated_all[relation["target_anno_id"]] = ""
+                    exist_flag = False
+                    for merge_list in related_truncated:
+                        if relation["source_anno_id"] in merge_list or relation["target_anno_id"] in merge_list:  # Consider cases where three text blocks may need to be merged
+                            merge_list.append(relation["source_anno_id"])
+                            merge_list.append(relation["target_anno_id"])
+                            exist_flag = True
+                    if not exist_flag:
+                        related_truncated.append([relation["source_anno_id"], relation["target_anno_id"]])
         
         for item in selected_annos['layout_dets']:
             if item['anno_id'] not in truncated_all.keys():
@@ -155,7 +156,11 @@ class End2EndDataset():
         for sample in process_bar:
             img_name = os.path.basename(sample["page_info"]["image_path"])
             # print('Process: ', img_name)
-            pred_path = os.path.join(pred_folder, img_name[:-4] + '.md')
+
+            pred_path = os.path.join(pred_folder, img_name[:-4], 'vlmocr', img_name[:-4] + '.md')
+            # pred_path = os.path.join(pred_folder, img_name[:-4], 'ocr', img_name[:-4] + '.md')
+
+            # pred_path = os.path.join(pred_folder, img_name[:-4] + '.md')
             if not os.path.exists(pred_path):
                 pred_path = os.path.join(pred_folder, img_name[:-4].replace('.pdf', "") + '.mmd')  # nougat
                 if not os.path.exists(pred_path):
@@ -293,7 +298,7 @@ class End2EndDataset():
                 html_table_match_s = [x for x in html_table_match_s if x['gt_idx'] != [""]]  # Remove extra preds
             elif latex_table_len > html_table_len:
                 latex_table_match_s = match_gt2pred_simple(gt_table_list, pred_dataset['latex_table'], 'latex_table', img_name) # Don't consider truncated merging for tables
-                latex_table_match_s = [x for x in latex_table_match_s if x['gt_idx'] != [""]]  # Remove extra preds                
+                latex_table_match_s = [x for x in latex_table_match_s if x['gt_idx'] != [""]]  # Remove extra preds
             else:
                 html_table_match_s = match_gt2pred_simple(gt_table_list, pred_dataset['html_table'], 'html_table', img_name) # Don't consider truncated merging for tables
                 html_table_match_s = [x for x in html_table_match_s if x['gt_idx'] != [""]]  # Remove extra preds

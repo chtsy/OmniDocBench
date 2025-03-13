@@ -1,0 +1,33 @@
+end2end_eval:
+  metrics:
+    text_block:
+      metric:
+        - Edit_dist
+        - BLEU
+        - METEOR
+    display_formula:
+      metric:
+        - Edit_dist
+        - CDM
+#    table:
+#      metric:
+#        - TEDS
+#        - Edit_dist
+    reading_order:
+      metric:
+        - Edit_dist
+  dataset:
+    dataset_name: end2end_dataset
+    ground_truth:
+#      data_path: /home/chutao/datas/OmniDocBench/OmniDocBench.json
+#      data_path: /fs-computility/llm/shared/chutao/datas/math_bm/labeling/annotations_250306.json
+#      data_path: /fs-computility/llm/shared/chutao/datas/math_bm/labeling/annotations_250310.json
+      data_path: /fs-computility/llm/shared/chutao/datas/math_bm/labeling/annotations_250311.json
+    prediction:
+      data_path: /fs-computility/llm/chutao/shcode/MinerU/output/new_math_bm
+#      data_path: /fs-computility/llm/chutao/shcode/MinerU/output/new_math_bm_got
+#      data_path: /fs-computility/llm/shared/chutao/datas/math_bm/labeling1/samples/mineru2
+#      data_path: /fs-computility/llm/shared/chutao/datas/math_bm/labeling1/samples/gpt-4o
+    match_method: quick_match #no_split #
+#    filter:
+#     language: english #simplified_chinese #
